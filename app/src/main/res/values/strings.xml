@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Weather</string>
+    <string name="default_city">City</string>
+    <string name="default_weekday">Monday</string>
+    <string name="default_temp">0°</string>
+    <string name="default_description">Ясно</string>
+    <string name="wind_label">Ветер</string>
+    <string name="defailt_speed_of_wind">4м/с</string>
+    <string name="noConnection">Кажется, нет интернет соединения</string>
+    <string name="img_description">Изображение погоды</string>
+    <string name="img_wind_description">Изображение ветра</string>
+    <string name="hint_city_edittext">Введите название города</string>
+</resources>
