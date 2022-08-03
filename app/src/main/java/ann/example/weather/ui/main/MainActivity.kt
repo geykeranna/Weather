@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("AAA", viewModel.getDescription())
         Log.d("AAA", viewModel.getWindSpeed())
 
-        if(!viewModel.getTemp().equals(null) && viewModel.getTemp() != "") {
+        if(!viewModel.getTemp().equals(null) && viewModel.getTemp() != "" && viewModel.getTemp() != "null") {
             binding.temp.text = viewModel.getTemp()
             binding.description.text = viewModel.getDescription()
             binding.wind.text = "Ветер"
@@ -55,6 +55,4 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("Connection retrofit AAA", viewModel.getAll().toString())
     }
-
-
 }
