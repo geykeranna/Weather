@@ -2,9 +2,7 @@ package ann.example.weather.ui.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.KeyEvent
-import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.ViewModelProvider
 import ann.example.weather.R
 import ann.example.weather.databinding.ActivityMainBinding
@@ -15,47 +13,53 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
 
-   /*
-    lateinit var recycleView: RecyclerView
-    lateinit var adaptor: DataItemAdaptor
-
-    private val weatherRequest: MutableLiveData<WeatherResponse> = MutableLiveData()
-    private lateinit var apiService: RetrofitServices
-    private lateinit var mJob: Job
-    override val coroutineContext: CoroutineContext
-        get() = mJob + Dispatchers.Main
-        */
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        var editText = binding.city
+        val editText = binding.city
+        val help = this
 
-        /*
-        binding.city.setOnKeyListener(View.OnKeyListener { view, i, keyEvent ->
-            if (i == KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_UP){
-                Log.d("ENTER KEY", "ENTER KEY WAS PUSHED")
-                return@OnKeyListener true
+        editText.setOnEditorActionListener{ _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE &&
+                !editText.text.isNullOrEmpty()) {
+
+                viewModel.getWeatherByCity(editText.text.toString())
+
+                viewModel.all.observe(help){
+                    it.let {
+                        val city = it.name
+                        val correctTemp = it.main.temp.toString() + " °C"
+                        val windSpeed = it.wind.speed.toString() + " м/с"
+                        val feelsTemp = "чувствуется как " + it.main.feels_like.toString() + " °C"
+                        val imgCode = it.weather[0].icon
+
+                        editText.setText(city)
+                        binding.temp.text = correctTemp
+                        binding.description.text = it.weather[0].description
+                        binding.feelsLike.text = feelsTemp
+                        binding.wind.text = "Ветер"
+                        binding.imgWind.setImageResource(R.drawable.wind)
+                        binding.windValue.text = windSpeed
+
+                        when(imgCode){
+                            "01d" -> binding.imgStateWeather.setImageResource(R.drawable.day)
+                            "01n" -> binding.imgStateWeather.setImageResource(R.drawable.night)
+                            "02d" -> binding.imgStateWeather.setImageResource(R.drawable.cloudy)
+                            "02n" -> binding.imgStateWeather.setImageResource(R.drawable.cloudy_night)
+                            "04d" -> binding.imgStateWeather.setImageResource(R.drawable.cloud)
+                            "04n" -> binding.imgStateWeather.setImageResource(R.drawable.cloud)
+                            "10d" -> binding.imgStateWeather.setImageResource(R.drawable.rain)
+                            "10n" -> binding.imgStateWeather.setImageResource(R.drawable.rain)
+                        }
+                    }
+                }
+                true;
             }
-            false
-        })*/
-
-
-        viewModel.all.observe(this){
-            it.let {
-                val city = it.name
-                editText.setText(city)
-                val correctTemp = it.main.temp.toString() + " C°"
-                binding.temp.text = correctTemp
-                binding.description.text = it.weather[0].description
-                binding.wind.text = "Ветер"
-                binding.imgWind.setImageResource(R.drawable.wind)
-                val windSpeed = it.wind.speed.toString() + " м/с"
-                binding.windValue.text = windSpeed
-            }
+            false;
         }
 
+        binding.description.text = "Ждём загрузки..."
     }
 }

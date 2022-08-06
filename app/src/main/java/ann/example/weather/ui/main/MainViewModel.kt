@@ -21,17 +21,12 @@ class MainViewModel @Inject constructor(private val repo: GetWeatherRepository) 
     val all: LiveData<WeatherEntity>
         get() = _all
 
-    init {
-        getAll()
-    }
-
-    fun getAll() = viewModelScope.launch{
-        repo.getAll("moscow").let {
-            if (it.isSuccessful) {
+    fun getWeatherByCity(city: String) = viewModelScope.launch{
+        repo.getAll(city).let {
+            if (it.isSuccessful)
                 _all.postValue(it.body())
-                Log.d("ZZZ", it.body().toString())
-            }
             else Log.d("AAA", "False again ${it.errorBody()}")
         }
     }
+
 }
