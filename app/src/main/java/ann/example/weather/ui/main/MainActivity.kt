@@ -3,6 +3,8 @@ package ann.example.weather.ui.main
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import ann.example.weather.R
 import ann.example.weather.databinding.ActivityMainBinding
@@ -29,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-
+        var editText = binding.city
 
         /*
         binding.city.setOnKeyListener(View.OnKeyListener { view, i, keyEvent ->
@@ -40,19 +42,20 @@ class MainActivity : AppCompatActivity() {
             false
         })*/
 
-        Log.d("AAA", viewModel.getTemp())
-        Log.d("AAA", viewModel.getDescription())
-        Log.d("AAA", viewModel.getWindSpeed())
 
-        if(!viewModel.getTemp().equals(null) && viewModel.getTemp() != "" && viewModel.getTemp() != "null") {
-            binding.temp.text = viewModel.getTemp()
-            binding.description.text = viewModel.getDescription()
-            binding.wind.text = "Ветер"
-            binding.imgWind.setImageResource(R.drawable.wind)
-            binding.windValue.text = viewModel.getWindSpeed()
-            Log.d("OOO", "WHAT THE HELL")
+        viewModel.all.observe(this){
+            it.let {
+                val city = it.name
+                editText.setText(city)
+                val correctTemp = it.main.temp.toString() + " C°"
+                binding.temp.text = correctTemp
+                binding.description.text = it.weather[0].description
+                binding.wind.text = "Ветер"
+                binding.imgWind.setImageResource(R.drawable.wind)
+                val windSpeed = it.wind.speed.toString() + " м/с"
+                binding.windValue.text = windSpeed
+            }
         }
 
-        Log.d("Connection retrofit AAA", viewModel.getAll().toString())
     }
 }
